@@ -1,0 +1,21 @@
+default:
+	@just --list --justfile {{justfile()}}
+
+install-deps:
+	pip3 install tldextract
+
+# get the top 1000 domains
+extract-domains-crux:
+	python3 extract-crux-domains.py | sort -u | dos2unix > temp-crux.txt
+
+# get the first 1000
+extract-domains-tranco:
+	head -1000 ../data/tranco/top-1m.csv | cut -d, -f2 | sort | dos2unix > temp-tranco.txt
+
+compare: extract-domains-crux extract-domains-tranco
+	diff -y temp-crux.txt temp-tranco.txt | less
+
+count-uniq: extract-domains-crux extract-domains-tranco
+	sort temp-crux.txt temp-tranco.txt | uniq -c | awk {'print $1'} | sort -n | uniq -c | less
+
+# vim: set ft=make noexpandtab :

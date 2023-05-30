@@ -1,0 +1,56 @@
+default:
+	@just --list --justfile {{justfile()}}
+
+datadir := "output-2023-02-01"
+working := "working-2023-02-01"
+
+# this should point to full path of output-2023-02-01 (for now)
+create-symlink argument:
+	ln -s {{argument}}
+
+# stitch together -0.png and -1.png horizontally
+stitch-images:
+	#!/usr/bin/env bash
+	set -euxo pipefail
+	# create a working directory
+	mkdir -p {{working}}
+	# {%%regex} to parallel removes postfix regexp
+	ls {{datadir}}/*.png \
+		| parallel --plus echo "{%[0-9]\.png}" \
+		| uniq \
+		| parallel --plus convert "{}*.png" +append "{{working}}/{/}combined.png"
+
+install-simplabel:
+	#!/usr/bin/env bash
+	set -euxo pipefail
+	#git clone https://github.com/FIXME/Simplabel
+	cd Simplabel
+	#git checkout feature-multiple-tags
+	pip install .
+
+label:
+	#!/usr/bin/env bash
+	set -euxo pipefail
+	# this creates a labels.json file on the first use, or if there is a
+	# labels.json already, it will ignore the --labels parameter
+	export PATH=$PATH:~/Library/Python/3.9/bin
+	simplabel \
+		--labels 1st amazon apple github google facebook linkedin microsoft twitter yahoo other \
+				meta-broken meta-nonenglish meta-nosso meta-recrawl \
+				cat-fin cat-shop cat-ent cat-soc cat-news cat-lifestyle cat-health cat-bizserv cat-info cat-xxx \
+		--user user \
+		--directory {{working}}
+
+labels-as-table:
+	#!/usr/bin/env python3
+	# output labled json data as delimited lines
+	import json
+	with open('{{working}}/labeled_user.json') as f:
+		json_obj = json.load(f)
+		for filename, label_list in json_obj.items():
+			label_list.sort()
+			labels_out_str = '|'.join(label_list)
+			print(f'{filename},{labels_out_str}')
+
+
+# vim: set ft=make noexpandtab :

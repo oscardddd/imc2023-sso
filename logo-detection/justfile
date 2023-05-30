@@ -1,0 +1,28 @@
+default:
+	@just --list --justfile {{justfile()}}
+
+datadir := "../../analysis/ground-truth-labeling/output-2023-02-01"
+
+match:
+	#!/usr/bin/env bash
+	./templatematch.py {{datadir}}/*-1.png --template_dir ./templates
+
+match-one:
+	#!/usr/bin/env bash
+	./templatematch.py "{{datadir}}/1000-https!www.trulia.com-20230201092548677-1.png" --display --template_dir ./templates
+
+install-dependencies:
+	pip install -r requirements.txt
+
+count-files-to-process:
+	find {{datadir}}/ -type f -iname "*-1.png" | wc -l
+
+# split into a total of 7 jobs (since startup costs are high)
+match-parallel:
+	#!/usr/bin/env bash
+	find {{datadir}}/ -type f -iname "*-1.png" \
+		| parallel --jobs 7 ./templatematch.py {} --template_dir ./templates \
+		> output-templatematch-2023-02-01.txt
+
+
+# vim: set ft=make noexpandtab :
