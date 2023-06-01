@@ -1,0 +1,35 @@
+default:
+	@just --list --justfile {{justfile()}}
+
+_generate-csv folder:
+	egrep "^[0-9]" {{folder}}/*.txt | sort -t"," -nk1,1 -k3,3 > {{replace(folder, "output", "websites")}}.csv
+
+# output-DEV: parse giant log file and extract website data
+generate-csv-DEV: (_generate-csv "output-DEV")
+
+_generate-tar folder:
+	tar -cf {{folder}}.tar.gz --exclude "*.har" {{folder}}
+
+# output-DEV: tarball (excluding .har) of results folder
+generate-tar-DEV: (_generate-tar "output-DEV")
+
+# install npm dependencies
+install-deps:
+	npm install
+
+# install chrome using `npx`
+install-chrome: install-deps
+	npx playwright install chrome
+
+# download and extract "I still don't care about cookies" extension
+install-isdcac:
+	# we need the source tarball for playwright
+	curl -LO https://github.com/OhMyGuus/I-Still-Dont-Care-About-Cookies/releases/download/v1.1.0/ISDCAC-chrome-source.zip
+	unzip -d isdcac-v1.10 ISDCAC-chrome-source.zip
+	rm ISDCAC-chrome-source.zip
+
+# crawl one website: grubhub[.]com
+run-clicker-test:
+	bash oauth.sh 9999 https://www.grubhub.com
+
+# vim: set ft=make noexpandtab :
