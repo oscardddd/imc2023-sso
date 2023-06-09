@@ -32,4 +32,30 @@ install-isdcac:
 run-clicker-test:
 	bash oauth.sh 9999 https://www.grubhub.com
 
+# download CrUX dataset (202304.csv.gz)
+download-crux-202304:
+	#!/usr/bin/env bash
+	if ! {{path_exists("202304.csv")}}; then
+	  curl -LO https://github.com/zakird/crux-top-lists/raw/main/data/global/202304.csv.gz;
+	  gzip -d 202304.csv.gz;
+	fi
+
+# crawl the CrUX dataset (202304.csv, Top 1K)
+crawl-crux-202304: download-crux-202304
+	#!/usr/bin/env bash
+
+	# number of parallel jobs
+	PARALLEL_JOBS=3
+
+	# time to wait for each job in seconds before killing
+	TIMEOUT=180
+
+	parallel \
+		--jobs ${PARALLEL_JOBS} \
+		--timeout ${TIMEOUT} \
+		--delay 2 \
+		--colsep ',' \
+		"bash oauth.sh {2} {1}" :::: <(sed -n 2,1000p 202304.csv)
+		#"echo {2} {1} ${PARALLEL_JOBS} ${TIMEOUT}" :::: <(sed -n 2,1000p 202304.csv)
+
 # vim: set ft=make noexpandtab :
