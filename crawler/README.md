@@ -1,11 +1,11 @@
 # internal-pages-research/client
 
-## quick start
+## quick start (one page)
 
 On macOS with MacPorts:
 ```
 # install dependencies
-sudo port install nodejs17 npm8 just
+sudo port install nodejs17 npm8 just parallel
 just install-deps
 just install-chrome
 just install-isdcac
@@ -23,6 +23,46 @@ with an example:
 ```
 9999,2023-06-01T19:14:34.592Z,https://www.grubhub.com,https://www.grubhub.com/login,9999-https!www.grubhub.com-20230601191434593-0.png,9999-https!www.grubhub.com-20230601191434593-1.png,9999-https!www.grubhub.com-20230601191434593-0.html.gz,9999-https!www.grubhub.com-20230601191434593-1.html.gz,1,1,0,0,1,1,0,0,0,0
 ```
+
+## quick start (crux top 1K)
+
+Now that we've run **Quick Start (One Page)** successfully,
+we can now crawl the sites on the Top Lists.
+
+The [CrUX dataset](https://github.com/zakird/crux-top-lists)
+contains the Top 1M sites, binned at 1K, 5K, ...:
+we'll use only the Top 1K.
+
+With the CrUX Top 1K, we'll parallelize our crawl using our
+  `clicker.js` with `parallel`.
+The default is 3 parallel jobs with a 2 second delay in between.
+If using an ad-blocking DNS resolver (e.g., Pi-Hole, NextDNS),
+  it's helpful to configure your system to use a public
+  resolver (Google, Cloudflare, your ISP).
+
+The following snippet will take ~3-4 hours to run:
+```
+# download and extract the CrUX dataset
+just download-crux-202304
+
+# run crawler over the Top 1K
+just crawl-crux-202304
+
+# coalesce the results
+just generate-csv-DEV
+
+# view the results
+less websites-DEV.csv
+```
+
+The output has the same format as previously described:
+```
+outputPrefix,timestamp,url,login_url,screenshot_url,screenshot_login_url,1st,amazon,apple,github,google,facebook,linkedin,microsoft,twitter,yahoo
+```
+
+In the case of crawling the CrUX lists, the `outputPrefix` contains the
+bin that the site is in (e.g., `1000` for Top 1K, `5000` for Top 5K,
+etc.).
 
 ## manually install dependencies
 
