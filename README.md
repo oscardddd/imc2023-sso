@@ -24,7 +24,7 @@ https://drive.google.com/file/d/1e89O5qxPy8931kNITVMncUss350BuTzq/view?usp=shari
 
 ## Crawler Data Collection
 
-Incoming...
+1. See the **Quick Start** in [crawler/README.md](crawler/README.md).
 
 ## Ground Truth Labeling
 
