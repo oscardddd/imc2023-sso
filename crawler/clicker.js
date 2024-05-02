@@ -659,12 +659,12 @@ chromium.use(stealth);
   //
   // outputPrefix,timestamp,url,login_url,screenshot_url,screenshot_login_url,1st,amazon,apple,github,google,facebook,linkedin,microsoft,twitter,yahoo
   //
-  // console.log(
-  //   `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
-  //     ","
-  //   )}`
-  // );
-  console.log(oauthProvidersBinary.join(", "));
+  console.log(
+    `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${oauthProvidersBinary.join(
+      ","
+    )}`
+  );
+  // console.log(oauthProvidersBinary.join(", "));
 
   // CLEANUP AND EXIT ////////////////////////////////////////////////
   if (debug === true) {
