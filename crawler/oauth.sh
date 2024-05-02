@@ -32,7 +32,7 @@ mkdir -p ${OUTPUT_DIR}
 
 declare -a OPTS=( )
 
-OPTS+=(--timetolive 5000)
+OPTS+=(--timetolive 4000)
 OPTS+=(--url $2)
 OPTS+=(--outputprefix $1)
 OPTS+=(--outputdir ${OUTPUT_DIR})
