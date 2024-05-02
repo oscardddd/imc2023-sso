@@ -502,7 +502,7 @@ chromium.use(stealth);
     // (edmunds[.]com) would satisfy this
 
     let loginButtonLabels = [
-      "/(Connexion|Inscription|Compte|Mon\\s*Compte|S’inscrire|Me\\s*connecter|Se\\s*connecter)/i",
+      "/(Log\\s*in|Sign in|Account|My\\s*Account+|Iniciar\\s*sesión|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i",
     ];
 
     let loginButtonsFound = await findButtons(page, loginButtonLabels);
@@ -583,12 +583,6 @@ chromium.use(stealth);
   //
 
   let oauthButtonLabelTemplates = [
-    "Sign up with",
-    "Sign in with",
-    "Continue with",
-    "Log in with",
-    "Login with",
-    "Register with",
     "S'inscrire avec",
     "Se connecter avec",
     "Continuer avec",
@@ -667,12 +661,12 @@ chromium.use(stealth);
   //
   // outputPrefix,timestamp,url,login_url,screenshot_url,screenshot_login_url,1st,amazon,apple,github,google,facebook,linkedin,microsoft,twitter,yahoo
   //
-  console.log(
-    `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
-      ","
-    )}`
-  );
-  //   console.log(oauthProvidersBinary.join(", "));
+  // console.log(
+  //   `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
+  //     ","
+  //   )}`
+  // );
+  console.log(oauthProvidersBinary.join(", "));
 
   // CLEANUP AND EXIT ////////////////////////////////////////////////
   if (debug === true) {
