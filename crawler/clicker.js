@@ -501,7 +501,9 @@ chromium.use(stealth);
     // "My\\s*[a-zA-Z]" doesn't quite work because "My Appraisal"
     // (edmunds[.]com) would satisfy this
 
-    let loginButtonLabels = ["/(Log\\s*in|Sign in|Account|My\\s*Account+)/i"];
+    let loginButtonLabels = [
+      "/(Log\\s*in|Sign in|Account|My\\s*Account+|Iniciar\\s*sesión|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i",
+    ];
 
     let loginButtonsFound = await findButtons(page, loginButtonLabels);
     log.error(`[.] found buttons = ${loginButtonsFound}`);
@@ -570,15 +572,23 @@ chromium.use(stealth);
   // XXX() new oauth providers need to go at the end!
   let oauthProviders = ["Google"];
   // let oauthProviders = ["Google"];
+  // let oauthButtonLabelTemplates = [
+  //   "Sign up with",
+  //   "Sign in with",
+  //   "Continue with",
+  //   "Log in with",
+  //   "Login with",
+  //   "Register with",
+  // ];
   let oauthButtonLabelTemplates = [
-    "Sign up with",
-    "Sign in with",
-    "Continue with",
-    "Log in with",
-    "Login with",
-    "Register with",
+    "Registrarse con",
+    "Iniciar sesión con",
+    "Inicia sesión con"
+    "Continuar con",
+    "Acceder con",
+    "Entrar con",
+    "Registrarse con",
   ];
-
   let oauthProvidersRegex = "(" + oauthProviders.join("|") + ")";
   let oauthButtonLabelRegex = "(" + oauthButtonLabelTemplates.join("|") + ")";
 
