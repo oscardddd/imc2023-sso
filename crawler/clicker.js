@@ -453,17 +453,17 @@ chromium.use(stealth);
   );
   await page.waitForTimeout(timeToLive);
 
-  log.info(`[.] take a screenshot`);
-  await page.screenshot({
-    path: outputDir + "/" + outputFilenameBase + "-0.png",
-  });
+  // log.info(`[.] take a screenshot`);
+  // await page.screenshot({
+  //   path: outputDir + "/" + outputFilenameBase + "-0.png",
+  // });
 
-  log.info(`[.] saving html`);
-  const html0 = await page.content();
-  saveCompressedString(
-    outputDir + "/" + outputFilenameBase + "-0.html.gz",
-    html0
-  );
+  // log.info(`[.] saving html`);
+  // const html0 = await page.content();
+  // saveCompressedString(
+  //   outputDir + "/" + outputFilenameBase + "-0.html.gz",
+  //   html0
+  // );
 
   // detect login page or login buttons //////////////////////////////////////
   //
@@ -555,17 +555,17 @@ chromium.use(stealth);
   // entry
   let loginUrl = await page.url();
 
-  log.info(`[.] take another screenshot`);
-  await page.screenshot({
-    path: outputDir + "/" + outputFilenameBase + "-1.png",
-  });
+  // log.info(`[.] take another screenshot`);
+  // await page.screenshot({
+  //   path: outputDir + "/" + outputFilenameBase + "-1.png",
+  // });
 
-  log.info(`[.] saving another html`);
-  const html1 = await page.content();
-  saveCompressedString(
-    outputDir + "/" + outputFilenameBase + "-1.html.gz",
-    html1
-  );
+  // log.info(`[.] saving another html`);
+  // const html1 = await page.content();
+  // saveCompressedString(
+  //   outputDir + "/" + outputFilenameBase + "-1.html.gz",
+  //   html1
+  // );
 
   // OAUTH SEARCH ////////////////////////////////////////////////////
 
@@ -583,7 +583,7 @@ chromium.use(stealth);
   let oauthButtonLabelTemplates = [
     "Registrarse con",
     "Iniciar sesión con",
-    "Inicia sesión con"
+    "Inicia sesión con",
     "Continuar con",
     "Acceder con",
     "Entrar con",
@@ -658,13 +658,15 @@ chromium.use(stealth);
   // CSV header:
   //
   // outputPrefix,timestamp,url,login_url,screenshot_url,screenshot_login_url,1st,amazon,apple,github,google,facebook,linkedin,microsoft,twitter,yahoo
-  //
+  
   console.log(
-    `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${oauthProvidersBinary.join(
+    `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
       ","
     )}`
   );
-  // console.log(oauthProvidersBinary.join(", "));
+  console.log(`${url}, ${oauthProvidersBinary.join(", ")}`);
+  
+  
 
   // CLEANUP AND EXIT ////////////////////////////////////////////////
   if (debug === true) {
