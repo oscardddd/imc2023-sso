@@ -505,8 +505,12 @@ chromium.use(stealth);
     //   "/(Log\\s*in|Sign in|Account|My\\s*Account+|Iniciar\\s*sesión|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i",
     // ];
 
+    // let loginButtonLabels = [
+    //   "/(Log\\s*in|Sign in|Account|My\\s*Account+|Anmelden|Registrieren|Konto|Mein\\s*Konto)/i",
+    // ];
+
     let loginButtonLabels = [
-      "/(Log\\s*in|Sign in|Account|My\\s*Account+|Anmelden|Registrieren|Konto|Mein\\s*Konto)/i",
+      "/(Log\\s*in|Sign in|Account|My\\s*Account+|Logga\\s*in|Signera\\s*in|Konto|Mitt\\s*konto)/i",
     ];
 
     let loginButtonsFound = await findButtons(page, loginButtonLabels);
@@ -585,21 +589,6 @@ chromium.use(stealth);
   //   "Register with",
   // ];
 
-  let oauthButtonLabelTemplates = [
-    "Sign up with",
-    "Sign in with",
-    "Continue with",
-    "Log in with",
-    "Login with",
-    "Register with",
-    "Registrati con",
-    "Accedi con",
-    "Continua con",
-    "Accedi con",
-    "Accedi con",
-    "Registrati con",
-  ];
-
   //   let oauthButtonLabelTemplates = [
   //     "Sign up with",
   //     "Sign in with",
@@ -607,13 +596,28 @@ chromium.use(stealth);
   //     "Log in with",
   //     "Login with",
   //     "Register with",
-  //     "Registrieren mit",
-  //     "Anmelden mit",
-  //     "Fortfahren mit",
-  //     "Einloggen mit",
-  //     "Einloggen mit",
-  //     "Registrieren mit",
+  //     "Registrati con",
+  //     "Accedi con",
+  //     "Continua con",
+  //     "Accedi con",
+  //     "Accedi con",
+  //     "Registrati con",
   //   ];
+
+  let oauthButtonLabelTemplates = [
+    "Sign up with",
+    "Sign in with",
+    "Continue with",
+    "Log in with",
+    "Login with",
+    "Registrera med",
+    "Logga in med",
+    "Fortsätt med",
+    "Logga in med",
+    "Logga in med",
+    "Registrera med",
+  ];
+
   let oauthProvidersRegex = "(" + oauthProviders.join("|") + ")";
   let oauthButtonLabelRegex = "(" + oauthButtonLabelTemplates.join("|") + ")";
 
