@@ -501,8 +501,16 @@ chromium.use(stealth);
     // "My\\s*[a-zA-Z]" doesn't quite work because "My Appraisal"
     // (edmunds[.]com) would satisfy this
 
+    // let loginButtonLabels = [
+    //   "/(Log\\s*in|Sign in|Account|My\\s*Account+|Iniciar\\s*sesión|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i",
+    // ];
+
+    // let loginButtonLabels = [
+    //   "/(Log\\s*in|Sign in|Account|My\\s*Account+|Anmelden|Registrieren|Konto|Mein\\s*Konto)/i",
+    // ];
+
     let loginButtonLabels = [
-      "/(Log\\s*in|Sign in|Account|My\\s*Account+|Accedi|Entra|Registrazione|Account|Il\\s*mio\\s*account)/i",
+      "/(Log\\s*in|Sign in|Account|My\\s*Account+|Logga\\s*in|Signera\\s*in|Konto|Mitt\\s*konto)/i",
     ];
 
     let loginButtonsFound = await findButtons(page, loginButtonLabels);
@@ -581,18 +589,33 @@ chromium.use(stealth);
   //   "Register with",
   // ];
 
+  //   let oauthButtonLabelTemplates = [
+  //     "Sign up with",
+  //     "Sign in with",
+  //     "Continue with",
+  //     "Log in with",
+  //     "Login with",
+  //     "Register with",
+  //     "Registrati con",
+  //     "Accedi con",
+  //     "Continua con",
+  //     "Accedi con",
+  //     "Accedi con",
+  //     "Registrati con",
+  //   ];
+
   let oauthButtonLabelTemplates = [
     "Sign up with",
     "Sign in with",
     "Continue with",
     "Log in with",
     "Login with",
-    "Registrati con",
-    "Accedi con",
-    "Continua con",
-    "Accedi con",
-    "Accedi con",
-    "Registrati con",
+    "Registrera med",
+    "Logga in med",
+    "Fortsätt med",
+    "Logga in med",
+    "Logga in med",
+    "Registrera med",
   ];
 
   let oauthProvidersRegex = "(" + oauthProviders.join("|") + ")";
