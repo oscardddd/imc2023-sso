@@ -501,8 +501,16 @@ chromium.use(stealth);
     // "My\\s*[a-zA-Z]" doesn't quite work because "My Appraisal"
     // (edmunds[.]com) would satisfy this
 
+    // let loginButtonLabels = [
+    //   "/(Log\\s*in|Sign in|Account|My\\s*Account+|Iniciar\\s*sesión|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i",
+    // ];
+
+    // let loginButtonLabels = [
+    //   "/(Log\\s*in|Sign in|Account|My\\s*Account+|Anmelden|Registrieren|Konto|Mein\\s*Konto)/i",
+    // ];
+
     let loginButtonLabels = [
-      "/(Connexion|Inscription|Compte|Mon\\s*Compte|S’inscrire|Me\\s*connecter|Se\\s*connecter)/i",
+      "/(Log\\s*in|Sign in|Account|My\\s*Account+|Logga\\s*in|Signera\\s*in|Konto|Mitt\\s*konto)/i",
     ];
 
     let loginButtonsFound = await findButtons(page, loginButtonLabels);
@@ -570,8 +578,28 @@ chromium.use(stealth);
   // OAUTH SEARCH ////////////////////////////////////////////////////
 
   // XXX() new oauth providers need to go at the end!
-  let oauthProviders = ["Google"];
   // let oauthProviders = ["Google"];
+  let oauthProviders = [
+    "Amazon",
+    "Apple",
+    "GitHub",
+    "Google",
+    "Facebook",
+    "LinkedIn",
+    "Microsoft",
+    "Twitter",
+    "Yahoo",
+  ];
+  // let oauthProviders = ["Google"];
+  // let oauthButtonLabelTemplates = [
+  //   "Sign up with",
+  //   "Sign in with",
+  //   "Continue with",
+  //   "Log in with",
+  //   "Login with",
+  //   "Register with",
+  // ];
+
   //   let oauthButtonLabelTemplates = [
   //     "Sign up with",
   //     "Sign in with",
@@ -579,8 +607,13 @@ chromium.use(stealth);
   //     "Log in with",
   //     "Login with",
   //     "Register with",
+  //     "Registrati con",
+  //     "Accedi con",
+  //     "Continua con",
+  //     "Accedi con",
+  //     "Accedi con",
+  //     "Registrati con",
   //   ];
-  //
 
   let oauthButtonLabelTemplates = [
     "Sign up with",
@@ -588,13 +621,12 @@ chromium.use(stealth);
     "Continue with",
     "Log in with",
     "Login with",
-    "Register with",
-    "S'inscrire avec",
-    "Se connecter avec",
-    "Continuer avec",
-    "Se connecter avec",
-    "Se connecter avec",
-    "S'inscrire avec",
+    "Registrera med",
+    "Logga in med",
+    "Fortsätt med",
+    "Logga in med",
+    "Logga in med",
+    "Registrera med",
   ];
 
   let oauthProvidersRegex = "(" + oauthProviders.join("|") + ")";
@@ -602,7 +634,7 @@ chromium.use(stealth);
 
   let oauthRegex =
     "/(" + oauthButtonLabelRegex + "\\s+" + oauthProvidersRegex + ")/i";
-  log.debug(`[.] regex used = ${oauthRegex}`);
+  log.error(`[.] regex used = ${oauthRegex}`);
 
   let oauthButtonsFound = await findButtons(page, [oauthRegex]);
   log.info(`[.] found ${oauthButtonsFound.length} oauth buttons`);
@@ -616,6 +648,8 @@ chromium.use(stealth);
     // get all innerTexts in case there's some crazy nested div/span thing
     // going on
     let buttonTexts = await oauthButtonsFound[i].allInnerTexts(); // array
+    log.error(`button texts: ${buttonTexts}\n`);
+
     log.debug(`[..] button ${i}: allInnerTexts() = ${buttonTexts}`);
 
     for (let j = 0; j < buttonTexts.length; j++) {
@@ -667,12 +701,12 @@ chromium.use(stealth);
   //
   // outputPrefix,timestamp,url,login_url,screenshot_url,screenshot_login_url,1st,amazon,apple,github,google,facebook,linkedin,microsoft,twitter,yahoo
   //
-  console.log(
-    `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
-      ","
-    )}`
-  );
-  //   console.log(oauthProvidersBinary.join(", "));
+  // console.log(
+  //   `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
+  //     ","
+  //   )}`
+  // );
+  console.log(oauthProvidersBinary.join(", "));
 
   // CLEANUP AND EXIT ////////////////////////////////////////////////
   if (debug === true) {
