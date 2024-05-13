@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def anayze_2():
+def analyze_2():
     # Path to your CSV file
     file_path = 'websites-DEV-all.csv'
 
@@ -28,3 +28,7 @@ def analyze_all():
     print(last_column)
 
     print("Google SSO: ", sum(last_column))
+
+
+
+analyze_2()

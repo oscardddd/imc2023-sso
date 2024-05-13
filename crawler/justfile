@@ -41,7 +41,7 @@ download-crux-202304:
 	fi
 
 # crawl the CrUX dataset (202304.csv, Top 1K)
-crawl-crux-202304: download-crux-202304
+crawl-crux-202304: 
 	#!/usr/bin/env bash
 
 	# number of parallel jobs
@@ -55,7 +55,7 @@ crawl-crux-202304: download-crux-202304
 		--timeout ${TIMEOUT} \
 		--delay 2 \
 		--colsep ',' \
-		"bash oauth.sh {2} {1}" :::: <(sed -n 2,2p es1.csv)
+		"bash oauth.sh {2} {1}" :::: <(sed -n 2,101p it1.csv)
 		#"echo {2} {1} ${PARALLEL_JOBS} ${TIMEOUT}" :::: <(sed -n 2,1000p 202304.csv)
 
 # vim: set ft=make noexpandtab :
