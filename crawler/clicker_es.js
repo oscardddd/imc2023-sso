@@ -6,6 +6,26 @@ import normalizeUrl from "normalize-url";
 import filenamify from "filenamify";
 import log from "loglevel";
 
+const loginbuttons =
+  "/(Log\\s*in|Sign in|Profile|Account|My\\s*Account+|INICIO\\s*DE\\s*SESIÓN|Iniciar\\s*sesión|Acceder|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i";
+
+const oauthbuttons = [
+  "Sign up with",
+  "Sign in with",
+  "Continue with",
+  "Log in with",
+  "Login with",
+  "Register with",
+  "Registrarse con",
+  "Iniciar sesión con",
+  "Inicia sesión con",
+  "Continuar con",
+  "Acceder con",
+  "Entrar con",
+  "Regístrese con",
+  "",
+];
+
 // we need both `import` (ES6) and `require` (CommonJS)
 // <https://stackoverflow.com/a/61947868>
 import { createRequire } from "module";
@@ -501,9 +521,7 @@ chromium.use(stealth);
     // "My\\s*[a-zA-Z]" doesn't quite work because "My Appraisal"
     // (edmunds[.]com) would satisfy this
 
-    let loginButtonLabels = [
-      "/(Log\\s*in|Sign in|Account|My\\s*Account+|Iniciar\\s*sesión|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i",
-    ];
+    let loginButtonLabels = [loginbuttons];
 
     let loginButtonsFound = await findButtons(page, loginButtonLabels);
     log.error(`[.] found buttons = ${loginButtonsFound}`);
@@ -582,20 +600,7 @@ chromium.use(stealth);
   //   ];
   //
 
-  let oauthButtonLabelTemplates = [
-    "Sign up with",
-    "Sign in with",
-    "Continue with",
-    "Log in with",
-    "Login with",
-    "Register with",
-    "Registrarse con",
-    "Iniciar sesión con",
-    "Inicia sesión con",
-    "Continuar con",
-    "Acceder con",
-    "Entrar con",
-  ];
+  let oauthButtonLabelTemplates = oauthbuttons;
 
   let oauthProvidersRegex = "(" + oauthProviders.join("|") + ")";
   let oauthButtonLabelRegex = "(" + oauthButtonLabelTemplates.join("|") + ")";

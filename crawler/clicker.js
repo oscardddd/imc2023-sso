@@ -6,6 +6,27 @@ import normalizeUrl from "normalize-url";
 import filenamify from "filenamify";
 import log from "loglevel";
 
+const loginbuttons =
+  "/(Log\\s*in|Sign in|Profile|Account|My\\s*Account+|Ingresar|INICIO\\s*DE\\s*SESIÓN|Iniciar\\s*sesión|Acceder|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i";
+
+const oauthbuttons = [
+  "Sign up with",
+  "Sign in with",
+  "Continue with",
+  "Log in with",
+  "Login with",
+  "Register with",
+  "Registrarse con",
+  "Iniciar sesión con",
+  "Inicia sesión con",
+  "Continuar con",
+  "Acceder con",
+  "Entrar con",
+  "Regístrese con",
+  "Conéctate con",
+  "",
+];
+
 // we need both `import` (ES6) and `require` (CommonJS)
 // <https://stackoverflow.com/a/61947868>
 import { createRequire } from "module";
@@ -501,17 +522,7 @@ chromium.use(stealth);
     // "My\\s*[a-zA-Z]" doesn't quite work because "My Appraisal"
     // (edmunds[.]com) would satisfy this
 
-    // let loginButtonLabels = [
-    //   "/(Log\\s*in|Sign in|Account|My\\s*Account+|Iniciar\\s*sesión|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i",
-    // ];
-
-    // let loginButtonLabels = [
-    //   "/(Log\\s*in|Sign in|Account|My\\s*Account+|Anmelden|Registrieren|Konto|Mein\\s*Konto)/i",
-    // ];
-
-    let loginButtonLabels = [
-      "/(Log\\s*in|Sign in|Account|My\\s*Account+|Logga\\s*in|Signera\\s*in|Konto|Mitt\\s*konto)/i",
-    ];
+    let loginButtonLabels = [loginbuttons];
 
     let loginButtonsFound = await findButtons(page, loginButtonLabels);
     log.error(`[.] found buttons = ${loginButtonsFound}`);
@@ -580,15 +591,6 @@ chromium.use(stealth);
   // XXX() new oauth providers need to go at the end!
   let oauthProviders = ["Google"];
   // let oauthProviders = ["Google"];
-  // let oauthButtonLabelTemplates = [
-  //   "Sign up with",
-  //   "Sign in with",
-  //   "Continue with",
-  //   "Log in with",
-  //   "Login with",
-  //   "Register with",
-  // ];
-
   //   let oauthButtonLabelTemplates = [
   //     "Sign up with",
   //     "Sign in with",
@@ -596,27 +598,10 @@ chromium.use(stealth);
   //     "Log in with",
   //     "Login with",
   //     "Register with",
-  //     "Registrati con",
-  //     "Accedi con",
-  //     "Continua con",
-  //     "Accedi con",
-  //     "Accedi con",
-  //     "Registrati con",
   //   ];
+  //
 
-  let oauthButtonLabelTemplates = [
-    "Sign up with",
-    "Sign in with",
-    "Continue with",
-    "Log in with",
-    "Login with",
-    "Registrera med",
-    "Logga in med",
-    "Fortsätt med",
-    "Logga in med",
-    "Logga in med",
-    "Registrera med",
-  ];
+  let oauthButtonLabelTemplates = oauthbuttons;
 
   let oauthProvidersRegex = "(" + oauthProviders.join("|") + ")";
   let oauthButtonLabelRegex = "(" + oauthButtonLabelTemplates.join("|") + ")";
@@ -686,14 +671,14 @@ chromium.use(stealth);
 
   // CSV header:
   //
-  // outputPrefix,timestamp,url,login_url,screenshot_url,screenshot_login_url,1st,amazon,apple,github,google,facebook,linkedin,microsoft,twitter,yahoo
+  // outputPrefix, timestamp, url, login_url, screenshot_url, screenshot_login_url, 1st, amazon, apple, github, google,facebook,linkedin,microsoft,twitter,yahoo
   //
-  // console.log(
-  //   `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
-  //     ","
-  //   )}`
-  // );
-  console.log(oauthProvidersBinary.join(", "));
+  console.log(
+    `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
+      ","
+    )}`
+  );
+  //   console.log(oauthProvidersBinary.join(", "));
 
   // CLEANUP AND EXIT ////////////////////////////////////////////////
   if (debug === true) {
