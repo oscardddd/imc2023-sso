@@ -7,7 +7,7 @@ import filenamify from "filenamify";
 import log from "loglevel";
 
 const loginbuttons =
-  "/(Log\\s*in|Sign in|Profile|Account|My\\s*Account+|INICIO\\s*DE\\s*SESIÓN|Iniciar\\s*sesión|Acceder|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i";
+  "/(Log\\s*in|Sign in|Profile|Account|My\\s*Account+|Ingresar|INICIO\\s*DE\\s*SESIÓN|Iniciar\\s*sesión|Acceder|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i";
 
 const oauthbuttons = [
   "Sign up with",
@@ -23,6 +23,7 @@ const oauthbuttons = [
   "Acceder con",
   "Entrar con",
   "Regístrese con",
+  "Conéctate con",
   "",
 ];
 

@@ -12,7 +12,12 @@ _*
 *.zip
 
 node_modules/
-./crawler/output-DEV/*
+
+# Ignore all files under crawler/output-DEV
+crawler/output-DEV/**
+
+# Ignore all files under crawler/output
+crawler/output/**
 # Created by https://www.toptal.com/developers/gitignore/api/vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=vim
 
