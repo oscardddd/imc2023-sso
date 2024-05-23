@@ -6,6 +6,27 @@ import normalizeUrl from "normalize-url";
 import filenamify from "filenamify";
 import log from "loglevel";
 
+const loginbuttons =
+  "/(Log\\s*in|Sign in|Profile|Account|My\\s*Account+|Ingresar|INICIO\\s*DE\\s*SESIÓN|Iniciar\\s*sesión|Acceder|Inicia Sesión|Registrate|Regístrate|Registrarse|Cuenta|Mi\\s*Cuenta)/i";
+
+const oauthbuttons = [
+  "Sign up with",
+  "Sign in with",
+  "Continue with",
+  "Log in with",
+  "Login with",
+  "Register with",
+  "Registrarse con",
+  "Iniciar sesión con",
+  "Inicia sesión con",
+  "Continuar con",
+  "Acceder con",
+  "Entrar con",
+  "Regístrese con",
+  "Conéctate con",
+  "",
+];
+
 // we need both `import` (ES6) and `require` (CommonJS)
 // <https://stackoverflow.com/a/61947868>
 import { createRequire } from "module";
@@ -193,6 +214,8 @@ chromium.use(stealth);
     var searchSelector2 = "";
     var searchSelector3 = "";
     for (let i = 0; i < buttonLabels.length; i++) {
+      console.log(`The ${i} label: ${buttonLabels[i]}`);
+
       searchSelector += "text=" + buttonLabels[i];
       searchSelector2 += "@aria-label=" + buttonLabels[i];
       if (i != buttonLabels.length - 1) {
@@ -498,10 +521,11 @@ chromium.use(stealth);
     //
     // "My\\s*[a-zA-Z]" doesn't quite work because "My Appraisal"
     // (edmunds[.]com) would satisfy this
-    let loginButtonLabels = ["/(Log\\s*in|Sign in|Account|My\\s*Account+)/i"];
+
+    let loginButtonLabels = [loginbuttons];
 
     let loginButtonsFound = await findButtons(page, loginButtonLabels);
-    log.debug(`[.] found buttons = ${loginButtonsFound}`);
+    log.error(`[.] found buttons = ${loginButtonsFound}`);
 
     if (loginButtonsFound.length == 0) {
       // TODO() we should also output a log entry
@@ -565,25 +589,19 @@ chromium.use(stealth);
   // OAUTH SEARCH ////////////////////////////////////////////////////
 
   // XXX() new oauth providers need to go at the end!
-  let oauthProviders = [
-    "Amazon",
-    "Apple",
-    "GitHub",
-    "Google",
-    "Facebook",
-    "LinkedIn",
-    "Microsoft",
-    "Twitter",
-    "Yahoo",
-  ];
-  let oauthButtonLabelTemplates = [
-    "Sign up with",
-    "Sign in with",
-    "Continue with",
-    "Log in with",
-    "Login with",
-    "Register with",
-  ];
+  let oauthProviders = ["Google"];
+  // let oauthProviders = ["Google"];
+  //   let oauthButtonLabelTemplates = [
+  //     "Sign up with",
+  //     "Sign in with",
+  //     "Continue with",
+  //     "Log in with",
+  //     "Login with",
+  //     "Register with",
+  //   ];
+  //
+
+  let oauthButtonLabelTemplates = oauthbuttons;
 
   let oauthProvidersRegex = "(" + oauthProviders.join("|") + ")";
   let oauthButtonLabelRegex = "(" + oauthButtonLabelTemplates.join("|") + ")";
@@ -653,13 +671,14 @@ chromium.use(stealth);
 
   // CSV header:
   //
-  // outputPrefix,timestamp,url,login_url,screenshot_url,screenshot_login_url,1st,amazon,apple,github,google,facebook,linkedin,microsoft,twitter,yahoo
+  // outputPrefix, timestamp, url, login_url, screenshot_url, screenshot_login_url, 1st, amazon, apple, github, google,facebook,linkedin,microsoft,twitter,yahoo
   //
   console.log(
     `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
       ","
     )}`
   );
+  //   console.log(oauthProvidersBinary.join(", "));
 
   // CLEANUP AND EXIT ////////////////////////////////////////////////
   if (debug === true) {
