@@ -583,6 +583,7 @@ chromium.use(stealth);
     "Log in with",
     "Login with",
     "Register with",
+    "",
   ];
 
   let oauthProvidersRegex = "(" + oauthProviders.join("|") + ")";
