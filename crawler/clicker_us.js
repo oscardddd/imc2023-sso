@@ -136,7 +136,8 @@ chromium.use(stealth);
 
       try {
         let inputs = await frame.locator(
-          'input[name="username"] >> visible=true'
+          'input[name="username"] >> visible=true',
+          'input[type="email"] >> visible=true'
         );
         await inputs.waitFor({ timeout: 800 }); // XXX
         let count = await inputs.count();
