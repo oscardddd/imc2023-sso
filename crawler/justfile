@@ -55,7 +55,7 @@ crawl:
 		--timeout ${TIMEOUT} \
 		--delay 2 \
 		--colsep ',' \
-		"bash oauth.sh {2} {1}" :::: <(sed -n 2,101p us_202404.csv)
+		"bash oauth.sh {2} {1}" :::: <(sed -n 2,1000p us_202404.csv)
 		#"echo {2} {1} ${PARALLEL_JOBS} ${TIMEOUT}" :::: <(sed -n 2,1000p 202304.csv)
 
 # vim: set ft=make noexpandtab :

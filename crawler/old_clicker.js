@@ -449,12 +449,12 @@ chromium.use(stealth);
     console.error(`[.] waiting for timeout ${timeToLive} ms before trying to search`);
     await page.waitForTimeout(timeToLive);
 
-    // log.info(`[.] take a screenshot`);
-    // await page.screenshot({ path: outputDir + '/' + outputFilenameBase + '-0.png'});
+    log.info(`[.] take a screenshot`);
+    await page.screenshot({ path: outputDir + '/' + outputFilenameBase + '-0.png'});
 
-    // log.info(`[.] saving html`);
-    // const html0 = await page.content();
-    // saveCompressedString(outputDir + '/' + outputFilenameBase + '-0.html.gz', html0);
+    log.info(`[.] saving html`);
+    const html0 = await page.content();
+    saveCompressedString(outputDir + '/' + outputFilenameBase + '-0.html.gz', html0);
 
     // detect login page or login buttons //////////////////////////////////////
     //
@@ -542,12 +542,12 @@ chromium.use(stealth);
     // entry
     let loginUrl = await page.url();
 
-    // log.info(`[.] take another screenshot`);
-    // await page.screenshot({ path: outputDir + '/' + outputFilenameBase + '-1.png'});
+    log.info(`[.] take another screenshot`);
+    await page.screenshot({ path: outputDir + '/' + outputFilenameBase + '-1.png'});
 
-    // log.info(`[.] saving another html`);
-    // const html1 = await page.content();
-    // saveCompressedString(outputDir + '/' + outputFilenameBase + '-1.html.gz', html1);
+    log.info(`[.] saving another html`);
+    const html1 = await page.content();
+    saveCompressedString(outputDir + '/' + outputFilenameBase + '-1.html.gz', html1);
 
     // OAUTH SEARCH ////////////////////////////////////////////////////
 
