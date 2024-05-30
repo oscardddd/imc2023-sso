@@ -411,7 +411,7 @@ chromium.use(stealth);
         {
             args: browserArgs,
             channel: "chrome",
-            headless: false,
+            headless: true, 
             ignoreDefaultArgs: ignoreBrowserArgs,
             viewport: null,
         });
