@@ -476,18 +476,6 @@ chromium.use(stealth);
   );
   await page.waitForTimeout(timeToLive);
 
-  log.info(`[.] take a screenshot`);
-  await page.screenshot({
-    path: outputDir + "/" + outputFilenameBase + "-0.png",
-  });
-
-  log.info(`[.] saving html`);
-  const html0 = await page.content();
-  saveCompressedString(
-    outputDir + "/" + outputFilenameBase + "-0.html.gz",
-    html0
-  );
-
   // detect login page or login buttons //////////////////////////////////////
   //
   // the landing page can have:
@@ -614,45 +602,219 @@ chromium.use(stealth);
     "Register with",
     "",
   ];
-
+  let found_Google = false;
   let oauthProvidersRegex = "(" + oauthProviders.join("|") + ")";
   let oauthButtonLabelRegex = "(" + oauthButtonLabelTemplates.join("|") + ")";
 
   let oauthRegex =
     "/(" + oauthButtonLabelRegex + "\\s+" + oauthProvidersRegex + ")/i";
-  log.debug(`[.] regex used = ${oauthRegex}`);
 
   let oauthButtonsFound = await findButtons(page, [oauthRegex]);
-  
-  log.info(`[.] found ${oauthButtonsFound.length} oauth buttons`);
-  log.debug(`[.] oauth buttons = ${oauthButtonsFound}`);
 
-  // iterate through the buttons and print matches
-  let oauthProvidersRe = new RegExp(oauthProvidersRegex, "gi");
+  // It is possible that the landing page is not a login
+  if (oauthButtonsFound.length == 0) {
+    log.info("Researching the landing page for login buttons");
+    let loginButtonLabels = ["/(Log\\s*in|Sign in|Account|My\\s*Account+)/i"];
 
-  var resultsOauth = [];
-  for (let i = 0; i < oauthButtonsFound.length; i++) {
-    // get all innerTexts in case there's some crazy nested div/span thing
-    // going on
-    let buttonTexts = await oauthButtonsFound[i].allInnerTexts(); // array
-    log.debug(`[..] button ${i}: allInnerTexts() = ${buttonTexts}`);
+    let loginButtonsFound = await findButtons(page, loginButtonLabels);
+    log.debug(`[.] found buttons = ${loginButtonsFound}`);
 
-    for (let j = 0; j < buttonTexts.length; j++) {
-      let oauthProvidersFound = buttonTexts[j].match(oauthProvidersRe);
-      log.debug(`[..] button ${i}: oauth providers = ${oauthProvidersFound}`);
-      resultsOauth.push(oauthProvidersFound);
+    if (loginButtonsFound.length == 0) {
+      log.error(`[.] could not find any login or sign in buttons on ${url}.`);
+      // await closeAndExit(browser);
+    } else {
+      log.info(
+        `[.] found ${loginButtonsFound.length} buttons, clicking on all until the page changes`
+      );
+      for (let i = 0; i < loginButtonsFound.length; i++) {
+        try {
+          log.error(`[..] trying to click on button ${i}`);
+          await loginButtonsFound[i].click({ timeout: 2 * 1000 });
+        } catch (error) {
+          if (error.name === "TimeoutError") {
+            continue; // Button not found on this frame
+          } else if (error.message.includes("frame got detached")) {
+            log.error(`[..] could not click as frame got detached, continuing`);
+            continue; // frames related to ads seem to come and go so just continue
+          } else {
+            throw error; // Unexpected error
+          }
+        }
+
+        // pause a bit to let things load and change
+        await sleep(3 * 1000);
+
+        // assume we are successful, so stop clicking buttons
+        break;
+      }
+
+      let oauthButtonsFound_new = await findButtons(page, [oauthRegex]);
+
+      if (oauthButtonsFound_new.length != 0) {
+        log.info(`[.] found ${oauthButtonsFound_new.length} oauth buttons`);
+        for (let i = 0; i < oauthButtonsFound_new.length; i++) {
+          try {
+            // log.error(`[..] trying to click on button ${i}`);
+            await oauthButtonsFound_new[i].click({ timeout: 2 * 1000 });
+          } catch (error) {
+            if (error.name === "TimeoutError") {
+              continue; // Button not found on this frame
+            } else if (error.message.includes("frame got detached")) {
+              log.error(
+                `[..] could not click as frame got detached, continuing`
+              );
+              continue; // frames related to ads seem to come and go so just continue
+            } else {
+              throw error; // Unexpected error
+            }
+          }
+
+          // pause a bit to let things load and change
+          await sleep(3 * 1000);
+
+          // assume we are successful, so stop clicking buttons
+          break;
+        }
+      } else {
+        log.info(`[.] found no oauth buttons`);
+      }
+    }
+  } else {
+    for (let i = 0; i < oauthButtonsFound.length; i++) {
+      try {
+        let popupPromise = new Promise((resolve) =>
+          page.once("popup", resolve)
+        );
+
+        await oauthButtonsFound[i].click({ timeout: 2 * 1000 });
+
+        const popup = await Promise.race([
+          popupPromise,
+          page
+            .waitForNavigation({ waitUntil: "networkidle", timeout: 5000 })
+            .then(() => null), // This resolves to null if navigation happens instead of a popup
+        ]);
+        if (popup) {
+          // const popup = popup;
+          await popup.fill('input[type="email"]', "qianlidong0@gmail.com"); // Fill the email
+          // await popup.press('input[type="email"]', "Enter");
+
+          await sleep(1000);
+          const nextButton = await popup.waitForSelector('text="Next"', {
+            timeout: 5000,
+          });
+          await nextButton.click();
+
+          await popup.waitForSelector('input[type="password"]', {
+            timeout: 5000,
+          }); // Wait for the password field
+          await sleep(1000);
+          await popup.fill('input[type="password"]', "Dql238837"); // Fill the password
+
+          const nextButton2 = await popup.waitForSelector('text="Next"', {
+            timeout: 5000,
+          });
+          log.error(`Find nextbutton: ${nextButton2}`);
+          await nextButton2.click();
+
+          await sleep(5000);
+
+          // const Continue = await popup.waitForSelector('text="Continue"', {
+          //   timeout: 1000,
+          // });
+
+          // await Continue.click();
+
+          // Optionally, wait for the popup to close or for navigation within the popup
+          // await popup.waitForNavigation({
+          //   waitUntil: "networkidle",
+          // });
+          await page.waitForNavigation({
+            waitUntil: "networkidle", // Adjust according to the actual network activity observed
+          });
+        } else {
+          await sleep(2000);
+          const loginInputExists = await page
+            .locator('input[type="email"]')
+            .count();
+          if (loginInputExists) {
+            await sleep(500);
+
+            await page.fill('input[type="email"]', "dongoscar295@gmail.com"); // Fill the email
+            // await popup.press('input[type="email"]', "Enter");
+
+            await sleep(5000);
+            const nextButton = await page.waitForSelector('text="Next"', {
+              timeout: 5000,
+            });
+            await nextButton.click();
+
+            await page.waitForSelector('input[type="password"]', {
+              timeout: 5000,
+            }); // Wait for the password field
+            await page.fill('input[type="password"]', "Dql238837"); // Fill the password
+
+            const nextButton2 = await page.waitForSelector('text="Next"', {
+              timeout: 5000,
+            });
+            log.error(`Find nextbutton: ${nextButton2}`);
+            await nextButton2.click();
+
+            await sleep(5000);
+          } else {
+          }
+        }
+      } catch (error) {
+        if (error.name === "TimeoutError") {
+          continue; // Button not found on this frame
+        } else if (error.message.includes("frame got detached")) {
+          log.error(`[..] could not click as frame got detached, continuing`);
+          continue; // frames related to ads seem to come and go so just continue
+        } else {
+          throw error; // Unexpected error
+        }
+      }
+
+      // pause a bit to let things load and change
+      await sleep(3 * 1000);
+      let loginUrl = await page.url();
+      log.error(`LoginURL: ${loginUrl}`);
+      // assume we are successful, so stop clicking buttons
+      break;
     }
   }
 
-  // FIRST PARTY AUTH SEARCH /////////////////////////////////////////
-  let firstPartyAuth = await findInputPassword(page);
-  log.debug(`${firstPartyAuth}`);
-
-  if (firstPartyAuth === true) {
-    resultsOauth.push("FirstPartyAuth");
+  if (found_Google == false) {
+    // TODO() break next section into its own function
   }
 
-  log.debug(`[.] oauth providers = ${resultsOauth}`);
+  // iterate through the buttons and print matches
+  // let oauthProvidersRe = new RegExp(oauthProvidersRegex, "gi");
+
+  // var resultsOauth = [];
+
+  // for (let i = 0; i < oauthButtonsFound.length; i++) {
+  //   // get all innerTexts in case there's some crazy nested div/span thing
+  //   // going on
+  //   let buttonTexts = await oauthButtonsFound[i].allInnerTexts(); // array
+  //   log.debug(`[..] button ${i}: allInnerTexts() = ${buttonTexts}`);
+
+  //   for (let j = 0; j < buttonTexts.length; j++) {
+  //     let oauthProvidersFound = buttonTexts[j].match(oauthProvidersRe);
+  //     log.debug(`[..] button ${i}: oauth providers = ${oauthProvidersFound}`);
+  //     resultsOauth.push(oauthProvidersFound);
+  //   }
+  // }
+
+  // FIRST PARTY AUTH SEARCH /////////////////////////////////////////
+  // let firstPartyAuth = await findInputPassword(page);
+  // log.debug(`${firstPartyAuth}`);
+
+  // if (firstPartyAuth === true) {
+  //   resultsOauth.push("FirstPartyAuth");
+  // }
+
+  // log.debug(`[.] oauth providers = ${resultsOauth}`);
 
   // OUTPUT //////////////////////////////////////////////////////////
 
@@ -668,31 +830,31 @@ chromium.use(stealth);
   //
   // XXX() this code is probably inefficient :-)
   //
-  var tempOauthProviders = ["FirstPartyAuth"].concat(oauthProviders);
-  var oauthProvidersBinary = [];
-  for (let i = 0; i < tempOauthProviders.length; i++) {
-    let found = resultsOauth.find((element) => {
-      return (
-        element.toString().toLowerCase() === tempOauthProviders[i].toLowerCase()
-      );
-    });
+  // var tempOauthProviders = ["FirstPartyAuth"].concat(oauthProviders);
+  // var oauthProvidersBinary = [];
+  // for (let i = 0; i < tempOauthProviders.length; i++) {
+  //   let found = resultsOauth.find((element) => {
+  //     return (
+  //       element.toString().toLowerCase() === tempOauthProviders[i].toLowerCase()
+  //     );
+  //   });
 
-    if (found) {
-      oauthProvidersBinary.push(1);
-    } else {
-      oauthProvidersBinary.push(0);
-    }
-  }
+  //   if (found) {
+  //     oauthProvidersBinary.push(1);
+  //   } else {
+  //     oauthProvidersBinary.push(0);
+  //   }
+  // }
 
   // CSV header:
   //
   // outputPrefix,timestamp,url,login_url,screenshot_url,screenshot_login_url,1st,amazon,apple,github,google,facebook,linkedin,microsoft,twitter,yahoo
   //
-  console.log(
-    `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
-      ","
-    )}`
-  );
+  // console.log(
+  //   `${outputPrefix},${expStartDt.toISOString()},${url},${loginUrl},${outputFilenameBase}-0.png,${outputFilenameBase}-1.png,${outputFilenameBase}-0.html.gz,${outputFilenameBase}-1.html.gz,${oauthProvidersBinary.join(
+  //     ","
+  //   )}`
+  // );
 
   // CLEANUP AND EXIT ////////////////////////////////////////////////
   if (debug === true) {
